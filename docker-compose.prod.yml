@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: notas_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: LIONcito129
+      POSTGRES_DB: gestion_notas
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: notas_backend_prod
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://postgres:LIONcito129@db:5432/gestion_notas?schema=public"
+      PORT: 3000
+      JWT_SECRET: "clave_super_secreta_para_firmar_tokens_gestion_notas"
+      NODE_ENV: "production"
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: notas_frontend_prod
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80" # frontend en http://localhost/
+
+  # PgAdmin es opcional en producción. Si quieres, lo dejas:
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: notas_pgadmin_prod
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "8080:80"
+
+volumes:
+  postgres_data:

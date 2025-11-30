@@ -1,0 +1,25 @@
+# backend/Dockerfile.prod
+
+# 1) Imagen Base
+FROM node:20-alpine
+
+WORKDIR /app
+
+# 2) Instalar dependencias
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+# 👇 AGREGA ESTA LÍNEA (El truco para que Prisma no falle al construir)
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+
+# 3) Generar cliente de Prisma
+RUN npx prisma generate
+
+# 4) Compilar TypeScript
+RUN npm run build
+
+# 5) Exponer puerto y ejecutar
+EXPOSE 3000
+CMD ["npm", "run", "start"]

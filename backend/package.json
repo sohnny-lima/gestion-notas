@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
-    "seed": "ts-node src/seed.ts",
+    "build": "tsc",
+    "start": "node dist/src/index.js",
+    "seed": "tsx src/seed.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

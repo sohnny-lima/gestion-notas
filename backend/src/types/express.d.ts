@@ -1,6 +1,5 @@
 // src/types/express.d.ts
-
-export {}; // convierte este archivo en un módulo
+import type { Request } from "express";
 
 declare global {
   namespace Express {
@@ -13,3 +12,15 @@ declare global {
     }
   }
 }
+
+// Tipo explícito que usan tus controladores/middlewares
+export interface AuthRequest extends Request {
+  user?: {
+    id: number;
+    role: "ADMIN" | "DOCENTE" | "ALUMNO";
+    email?: string;
+  };
+}
+
+// Necesario para que el archivo sea tratado como módulo
+export {};
