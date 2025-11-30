@@ -1,0 +1,24 @@
+{
+  "name": "gestion-notas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"pnpm -C backend dev\" \"pnpm -C frontend dev\"",
+    "dev:back": "pnpm -C backend dev",
+    "dev:front": "pnpm -C frontend dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.21.0",
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "prisma": "^7.0.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.0.1"
+  }
+}

@@ -1,0 +1,67 @@
+// backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library" // 👈 AGREGA ESTO para forzar el modo nativo
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  DOCENTE
+  ALUMNO
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(ALUMNO)
+  code      String?
+  createdAt DateTime @default(now())
+
+  coursesTeaching Course[]     @relation("TeacherCourses")
+  enrollments     Enrollment[]
+  grades          Grade[]
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  name        String
+  code        String   @unique
+  description String?
+  teacherId   Int?
+  teacher     User?    @relation("TeacherCourses", fields: [teacherId], references: [id])
+
+  enrollments Enrollment[]
+  grades      Grade[]
+}
+
+model Enrollment {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  courseId  Int
+  createdAt DateTime @default(now())
+
+  student User   @relation(fields: [studentId], references: [id])
+  course  Course @relation(fields: [courseId], references: [id])
+
+  @@unique([studentId, courseId])
+}
+
+model Grade {
+  id        Int      @id @default(autoincrement())
+  value     Float
+  studentId Int
+  courseId  Int
+  createdAt DateTime @default(now())
+
+  student User   @relation(fields: [studentId], references: [id])
+  course  Course @relation(fields: [courseId], references: [id])
+
+  @@unique([studentId, courseId])
+}
