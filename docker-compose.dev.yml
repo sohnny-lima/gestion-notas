@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   db:
     image: postgres:15-alpine
@@ -15,7 +17,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile # el normal de dev
+      dockerfile: Dockerfile # este es el Dockerfile normal, NO el prod
     container_name: notas_backend_dev
     restart: always
     depends_on:

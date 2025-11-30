@@ -17,14 +17,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const isProd = process.env.NODE_ENV === "production";
+
 /* ============================
    🚀 C O R S   C O N F I G
 ============================ */
 
-const allowedOrigins =
-  process.env.NODE_ENV === "production"
-    ? ["http://localhost"] // 🔥 Frontend en modo producción por NGINX
-    : ["http://localhost:5173", "http://localhost:5174"]; // 🔥 Vite en modo dev
+const allowedOrigins = isProd
+  ? ["http://72.60.50.177", "http://72.60.50.177:80"]
+  : [
+      "http://localhost:5173", // Vite dev
+    ];
 
 app.use(
   cors({
@@ -37,33 +40,21 @@ app.use(
 
 app.use(express.json());
 
-/* ============================
-   📌 R U T A   D E   P R U E B A
-============================ */
 app.get("/", (_req, res) => {
   res.json({ ok: true, message: "API Sistema de Notas (Docker PROD + DEV)" });
 });
 
-/* ============================
-   📌 R U T A S   P R I N C I P A L E S
-============================ */
+// Rutas principales
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/courses", coursesRoutes);
 app.use("/api/enrollments", enrollmentsRoutes);
 app.use("/api/grades", gradesRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
-// DOCENTE
 app.use("/api/teacher", teacherRoutes);
-
-// ALUMNO (plural: students)
 app.use("/api/students", studentRoutes);
 
-/* ============================
-   🚀 I N I C I O   D E   A P I
-============================ */
 app.listen(PORT, () => {
-  console.log(`🚀 API escuchando en http://localhost:${PORT}`);
+  console.log(`🚀 API escuchando en http://0.0.0.0:${PORT}`);
   console.log(`🌐 CORS activo para: ${allowedOrigins.join(", ")}`);
 });

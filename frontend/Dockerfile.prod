@@ -10,13 +10,12 @@ RUN npm install
 
 COPY . .
 
-# Usa el .env.production de Vite
+# Vite usará .env.production automáticamente
 RUN npm run build
 
 # Etapa 2: servir estáticos con Nginx
 FROM nginx:alpine
 
-# Copiamos el build al HTML de nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80

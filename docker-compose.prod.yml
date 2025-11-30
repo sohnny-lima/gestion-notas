@@ -37,9 +37,8 @@ services:
     depends_on:
       - backend
     ports:
-      - "80:80" # frontend en http://localhost/
+      - "80:80" # http://72.60.50.177
 
-  # PgAdmin es opcional en producción. Si quieres, lo dejas:
   pgadmin:
     image: dpage/pgadmin4
     container_name: notas_pgadmin_prod

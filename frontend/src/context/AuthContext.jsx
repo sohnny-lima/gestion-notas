@@ -47,13 +47,14 @@ export function AuthProvider({ children }) {
       setLoading(true);
       setError(null);
 
-      // POST a backend -> http://localhost:3000/api/auth/login
+      // POST al backend -> {API_BASE}/api/auth/login
       const { data } = await api.post(
         "/auth/login",
         { email, password },
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true,
+          // Solo necesitas withCredentials si usas cookies httpOnly
+          withCredentials: false,
         }
       );
 
@@ -66,7 +67,7 @@ export function AuthProvider({ children }) {
       // Guardar en estado
       setUser(loggedUser);
 
-      // Redirigir al dashboard (puedes luego condicionar por rol)
+      // Redirigir al dashboard
       navigate("/dashboard");
     } catch (err) {
       console.error("Error en login:", err);
