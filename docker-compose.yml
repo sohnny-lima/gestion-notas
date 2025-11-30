@@ -1,0 +1,64 @@
+services:
+  # 1) Base de datos PostgreSQL en Docker
+  db:
+    image: postgres:15-alpine
+    container_name: notas_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: LIONcito129 # misma clave que usas local
+      POSTGRES_DB: gestion_notas
+    ports:
+      - "5432:5432" # accesible desde tu Windows
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2) Backend (Node + Express + Prisma)
+  backend:
+    build: ./backend
+    container_name: notas_backend
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    environment:
+      # ⚠️ OJO: aquí host = db y puerto = 5432 (interno de Docker)
+      DATABASE_URL: "postgresql://postgres:LIONcito129@db:5432/gestion_notas?schema=public"
+      PORT: 3000
+      JWT_SECRET: "clave_super_secreta_para_firmar_tokens_gestion_notas"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  # 3) PgAdmin para ver la BD en navegador
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: notas_pgadmin
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "8080:80"
+
+  # 4) Frontend (React + Vite)
+  frontend:
+    build: ./frontend
+    container_name: notas_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    environment:
+      # URL pública del backend vista desde el navegador
+      VITE_API_URL: "http://localhost:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
